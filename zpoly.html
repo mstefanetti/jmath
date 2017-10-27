@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+body{
+background-color: #ccc;
+background-image: url(batthern.png);
+}
+
+div#main{
+display: flex;
+justify-content: center;
+}
+
+canvas#gCanvas{
+margin: 0px;
+}
+
+canvas#fCanvas{
+margin-left: 4px;
+}
+
+canvas#gCanvas,canvas#fCanvas{
+background-color: white;
+}
+
+canvas#gCanvas,canvas#fCanvas,div#panel{
+border: 2px solid #888;
+border-radius: 3px;
+}
+
+div#panel{
+margin-top: 1px;
+width:300px;
+height:300px;
+background-color: #ddd;
+}
+
+div#controls{
+padding:10px;
+color: #333;
+font-weight: 700;
+line-height: 56px;
+font-size: 15px;
+}
+
+</style>
+
+<script type="text/javascript">
+function updateSlider(slideAmount) {
+var display = document.getElementById("chosen");
+gr=slideAmount/100*2;
+display.innerHTML="r: "+gr;
+draw()
+}
+</script>
+</head>
+<body>
+
+<div id="main">
+
+<div style="float:left;">
+
+<canvas id="gCanvas" width="300" height="300">NoCanvas</canvas>
+
+<div id="panel">
+
+<div id="controls">
+<div id="slider">0<input id="slide" type="range" min="1" max="100" step="1" value="50" 
+onmousemove="updateSlider(this.value)" 
+ontouchmove="updateSlider(this.value)"
+/>2</div>
+<div id="chosen">r: 1</div>
+</div>
+
+</div>
+
+</div>
+
+<canvas id="fCanvas" width="600" height="600"></canvas>
+
+
+</div>
+
+<script>
+var gCanvas = document.getElementById("gCanvas");
+var gc = gCanvas.getContext("2d");
+ 
+var fCanvas = document.getElementById("fCanvas");
+var fc = fCanvas.getContext("2d");
+var gr=1.0
+
+var gSize=gCanvas.width;
+var fSize=fCanvas.width;
+
+
+function draw(){
+
+gc.clearRect(0, 0, gCanvas.width, gCanvas.height);
+fc.clearRect(0, 0, fCanvas.width, fCanvas.height);
+
+var gcInit = false;
+var fcInit = false;
+
+var gxr1=-2.0
+var gxr2=2.0
+var gyr1=-2.0
+var gyr2=2.0
+
+var gsx=gxr2-gxr1
+var gsy=gyr2-gyr1
+
+   //console.log("gx:"+gx+" gy:" +gy);
+
+var fxr1=-4.0
+var fxr2=4.0
+var fyr1=-4.0
+var fyr2=4.0
+
+var fsx=fxr2-fxr1
+var fsy=fyr2-fyr1
+
+var p0x=1.0
+var p0y=1.0
+var p1x=0.2
+var p1y=0.7
+var p2x=-0.1
+var p2y=0.5
+var p3x=-0.2
+var p3y=0.8
+
+
+var steps=120;
+var smallteta=2.0*Math.PI/steps
+for(var i=0;i<steps+1;i++)
+{
+   var teta=i*smallteta
+   var x=gr*Math.cos(teta)
+   var y=gr*Math.sin(teta)
+   var gr2=gr*gr
+   var x2=gr2*Math.cos(2.0*teta)
+   var y2=gr2*Math.sin(2.0*teta)
+   var gr3=gr2*gr
+   var x3=gr3*Math.cos(3.0*teta)
+   var y3=gr3*Math.sin(3.0*teta)
+   
+   var gcx=0.0+gSize*(x-gxr1)/gsx
+   var gcy=gSize-gSize*(y-gyr1)/gsy
+   
+   var fx0 = p0x
+   var fy0 = p0y
+   var fx1 = p1x*x-p1y*y;
+   var fy1 = p1y*x+p1x*y;
+   var fx2 = p2x*x2-p2y*y2;
+   var fy2 = p2y*x2+p2x*y2;
+   var fx3 = p3x*x3-p3y*y3;
+   var fy3 = p3y*x3+p3x*y3;
+   
+   var fx = fx0+fx1+fx2+fx3;
+   var fy = fy0+fy1+fy2+fy3;
+
+   var fcx=0.0+fSize*(fx-fxr1)/fsx
+   var fcy=fSize-fSize*(fy-fyr1)/fsy
+
+   //console.log("teta:"+teta+" x:" +x+" y:" +y+" gx:"+gx+" gy:"+gy);
+   if(!gcInit)
+   {
+	gc.beginPath();
+	gc.moveTo(gcx, gcy);
+	gcInit=true
+   }
+   else
+   {
+	gc.lineTo(gcx, gcy);
+   }
+   
+   if(!fcInit)
+   {
+	fc.beginPath();
+	fc.moveTo(fcx, fcy);
+	fcInit=true
+   }
+   else
+   {
+	fc.lineTo(fcx, fcy);
+   }
+}
+
+gc.stroke();
+fc.stroke();
+}
+
+draw()
+</script>
+
+</body>
+</html>
