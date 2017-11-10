@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel=stylesheet href=slider.css>
+
+<style type="text/css">
+body{
+background-color: #ccc;
+background-image: url(batthern.png);
+}
+
+div#main{
+display: flex;
+justify-content: center;
+}
+
+canvas#gCanvas{
+margin: 0px;
+}
+
+canvas#fCanvas{
+margin-left: 4px;
+}
+
+canvas#gCanvas,canvas#fCanvas{
+background-color: white;
+}
+
+canvas#gCanvas,canvas#fCanvas,div#panel{
+border: 2px solid #888;
+border-radius: 3px;
+}
+
+div#panel{
+margin-top: 1px;
+width:300px;
+height:300px;
+background-color: #ddd;
+}
+
+div#controls{
+padding:10px;
+color: #333;
+font-weight: 700;
+line-height: 20px;
+font-size: 14px;
+}
+
+div#chosen{
+padding:0px;
+}
+</style>
+
+<script type="text/javascript">
+function updateSlider(slideAmount) {
+var display = document.getElementById("chosen");
+gr=slideAmount/100*2;
+display.innerHTML="r: "+gr;
+draw()
+}
+</script>
+</head>
+<body>
+
+<div id="main">
+<canvas id="fCanvas" width="600" height="600"></canvas>
+</div>
+
+<script>
+var fCanvas = document.getElementById("fCanvas");
+var fc = fCanvas.getContext("2d");
+var fSize=fCanvas.width;
+
+
+function draw(){
+
+var fxr1=-1.0
+var fxr2=1.0
+var fyr1=-1.0
+var fyr2=1.0
+
+var fsx=fxr2-fxr1
+var fsy=fyr2-fyr1
+
+fc.clearRect(0, 0, fCanvas.width, fCanvas.height);
+
+var steps=100;
+for(var i=0;i<fSize+1;i++)
+{	
+	var x=fxr1+i*fsx/fSize
+    
+	for(var j=0;j<fSize+1;j++)
+	{
+		var y=fyr1+j*fsy/fSize
+		var zx=0
+		var zy=0
+	    for(var n=0;n<steps;n++)
+		{		   
+	      zxp=zx*zx-zy*zy+x
+          zyp=2*zx*zy+y
+  	
+	      zx=zxp
+	      zy=zyp
+		  
+		  m=zx*zx+zy*zy
+		  
+		  var fcx=0.0+fSize*(x-fxr1)/fsx
+          var fcy=fSize-fSize*(y-fyr1)/fsy
+
+		  if(m>=1)
+		  {
+		    n=steps;
+		    fc.fillRect(fcx,fcy,1,1);
+			fc.strokeStyle = m;
+            fc.stroke();
+		  }
+		  
+
+		}
+	}
+}
+
+}
+
+draw()
+</script>
+
+</body>
+</html>
